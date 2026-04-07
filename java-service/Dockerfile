@@ -11,6 +11,6 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
-COPY --from=builder /app/target/fitness-tracker.jar fitness-tracker.jar
+COPY --from=builder /app/target/*.jar app.jar
 
-CMD ["java", "-jar", "fitness-tracker.jar"]
+CMD ["java", "-jar", "app.jar"]

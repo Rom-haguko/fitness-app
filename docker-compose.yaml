@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   java-service:
     build: ./java-service
@@ -15,8 +13,6 @@ services:
   go-service:
     build: ./go-service
     container_name: go-service
-    volumes:
-      - ./go-service:/app
     ports:
       - "8081:8081"
     depends_on:
