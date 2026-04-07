@@ -5,8 +5,8 @@ services:
     build: ./java-service
     container_name: java-service
     volumes:
-      - ./java-service/src:/app/src        
-      - ./java-service/target:/app/target  
+      - ./java-service/src:/app/src
+      - ./java-service/target:/app/target
     ports:
       - "8080:8080"
     depends_on:
@@ -16,7 +16,7 @@ services:
     build: ./go-service
     container_name: go-service
     volumes:
-      - ./go-service:/app                  
+      - ./go-service:/app
     ports:
       - "8081:8081"
     depends_on:
@@ -26,12 +26,13 @@ services:
     build: ./python-service
     container_name: python-service
     volumes:
-      - ./python-service:/app 
+      - ./python-service:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
-db:
+
+  db:
     image: postgres:15
     container_name: postgres-db
     environment:
