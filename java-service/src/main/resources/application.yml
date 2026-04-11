@@ -1,28 +1,37 @@
 server:
   port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
 
 spring:
   application:
     name: java-service
 
   datasource:
-    url: jdbc:postgresql://postgres-db:5432/fitness_tracker
+    url: jdbc:postgresql://db:5432/fitness_tracker
     username: user
     password: password
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+        default_schema: fitness_tracker
+    open-in-view: false
 
   thymeleaf:
     cache: false
     encoding: UTF-8
+    mode: HTML
+    prefix: classpath:/templates/
+    suffix: .html
 
   security:
     user:
@@ -34,3 +43,14 @@ services:
     url: http://python-service:8000
   go-stats:
     url: http://go-service:8081
+
+logging:
+  level:
+    root: INFO
+    FitnessTracker: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
