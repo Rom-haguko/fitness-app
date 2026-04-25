@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register | Fitness Tracker</title>
+</head>
+<body>
+<h2>Create Your Account</h2>
+
+<form th:action="@{/register}" th:object="${registerRequest}" method="post">
+
+    <!-- Общая ошибка (например, "Username already exists") -->
+    <div th:if="${error}" style="color: red;" th:text="${error}"></div>
+
+    <!-- Ошибка совпадения паролей -->
+    <div th:if="${passwordError}" style="color: red;" th:text="${passwordError}"></div>
+
+    <div>
+        <label>Username:</label><br>
+        <input type="text" th:field="*{username}" required />
+        <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red;"></p>
+    </div>
+
+    <div>
+        <label>Email:</label><br>
+        <input type="email" th:field="*{email}" required />
+        <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></p>
+    </div>
+
+    <div>
+        <label>Password:</label><br>
+        <input type="password" th:field="*{password}" required />
+        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></p>
+    </div>
+
+    <div>
+        <label>Confirm password:</label><br>
+        <input type="password" th:field="*{confirmPassword}" required />
+    </div>
+
+    <br>
+    <button type="submit">Register</button>
+</form>
+
+<p>Already have an account? <a th:href="@{/login}">Login here</a></p>
+</body>
+</html>

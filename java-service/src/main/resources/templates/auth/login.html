@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Fitness Tracker</title>
+</head>
+<body>
+<h2>Login to Fitness Tracker</h2>
+
+<!-- Сообщение об ошибке, если Spring Security отклонил вход -->
+<div th:if="${param.error}" style="color: red; margin-bottom: 10px;">
+    Invalid username or password.
+</div>
+
+<!-- Сообщение после успешной регистрации -->
+<div th:if="${param.registered}" style="color: green; margin-bottom: 10px;">
+    Registration successful! Please login.
+</div>
+
+<form th:action="@{/login}" method="post">
+    <div>
+        <label>Username:</label><br>
+        <input type="text" name="username" required />
+    </div>
+    <br>
+    <div>
+        <label>Password:</label><br>
+        <input type="password" name="password" required />
+    </div>
+    <br>
+    <button type="submit">Sign In</button>
+</form>
+
+<p>Don't have an account? <a th:href="@{/register}">Register here</a></p>
+</body>
+</html>
