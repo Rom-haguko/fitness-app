@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Fitness Tracker | Home</title>
 </head>
 <body>
+<h1>Welcome to Fitness Tracker</h1>
+<p>Your personal assistant for generating workout plans and tracking progress.</p>
 
+<a th:href="@{/login}">Login</a>
+<a th:href="@{/register}">Register</a>
 </body>
 </html>
