@@ -6,12 +6,12 @@ import (
 )
 
 type Config struct {
-	AppEnv string
-	AppPort string
-	DBHost string
-	DBPort string
-	DBName string
-	DBUser string
+	AppEnv     string
+	AppPort    string
+	DBHost     string
+	DBPort     string
+	DBName     string
+	DBUser     string
 	DBPassword string
 }
 
