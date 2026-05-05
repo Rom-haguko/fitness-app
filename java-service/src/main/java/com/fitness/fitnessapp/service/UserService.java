@@ -4,18 +4,24 @@ import com.fitness.fitnessapp.dto.auth.RegisterRequest;
 import com.fitness.fitnessapp.entity.User;
 import com.fitness.fitnessapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     public void createUser(RegisterRequest request) {
+        log.info("Saving user to database",kv("username",request.getUsername()));
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
