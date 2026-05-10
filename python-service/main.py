@@ -1,24 +1,20 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-from pydantic_settings import BaseSettings
-import google.generativeai as genai
+from app.api import workout_router
+from app.db.database import Base, engine
+from loguru import logger
 
+# Создание таблицы при запуске, если ее нет
+Base.metadata.create_all(bind=engine)
 
-# api settings
-class Settings(BaseSettings):
-    google_api_key: str
+app = FastAPI(title="Fitness Python Service")
 
-    class Config:
-        env_file = ".env"
-
-settings = Settings()
-genai.configure(api_key=settings.google_api_key)
-
-
-
-
-app = FastAPI()
+app.include_router(workout_router.router, prefix="/api/v1/workout_plans")
 
 @app.get("/")
-def read_root():
-    return {"status": "Python service started!"}
+def health_check():
+    logger.info("Health check accessed")
+    return {"status": "Python service is running"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)

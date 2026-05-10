@@ -1,4 +1,8 @@
 fastapi
 uvicorn
-google-generativeai
+sqlalchemy
+psycopg2-binary
 pydantic-settings
+google-genai
+loguru
+python-dotenv
