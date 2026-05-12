@@ -25,6 +25,7 @@ func NewRouter(
 	mux.HandleFunc("/api/v1/body-weight", bodyWeightHandler.CreateBodyWeight)
 	mux.HandleFunc("/api/v1/statistics/summary", statisticsHandler.GetSummary)
 	mux.HandleFunc("/api/v1/statistics/body-weight", statisticsHandler.GetBodyWeightChart)
+	mux.HandleFunc("/api/v1/statistics/volume", statisticsHandler.GetVolumeChart)
 
 	var root http.Handler = mux
 	root = RecoverMiddleware(log, root)

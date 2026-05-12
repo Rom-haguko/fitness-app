@@ -15,6 +15,7 @@ import (
 type StatisticsService interface {
 	GetSummary(ctx context.Context, userID int64) (dto.StatisticsSummaryResponse, error)
 	GetBodyWeightChart(ctx context.Context, userID int64) (dto.BodyWeightChartResponse, error)
+	GetVolumeChart(ctx context.Context, userID int64) (dto.VolumeChartResponse, error)
 }
 
 type StatisticsHandler struct {
@@ -115,6 +116,57 @@ func (h StatisticsHandler) GetBodyWeightChart(w http.ResponseWriter, r *http.Req
 		}
 
 		h.log.Error("failed to get body weight chart",
+			slog.Int("status", statusCode),
+			slog.Int64("user_id", userID),
+			slog.Any("error", err),
+		)
+
+		if writeErr := response.WriteError(w, statusCode, message); writeErr != nil {
+			h.log.Error("failed to write error response", slog.Any("error", writeErr))
+		}
+		return
+	}
+
+	if err := response.WriteJSON(w, http.StatusOK, chart); err != nil {
+		h.log.Error("failed to write success response", slog.Any("error", err))
+	}
+}
+
+func (h StatisticsHandler) GetVolumeChart(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		if err := response.WriteError(w, http.StatusMethodNotAllowed, "method not allowed"); err != nil {
+			h.log.Error("failed to write method not allowed response", slog.Any("error", err))
+		}
+		return
+	}
+
+	userIDRaw := r.URL.Query().Get("user_id")
+	if userIDRaw == "" {
+		if err := response.WriteError(w, http.StatusBadRequest, "user_id is required"); err != nil {
+			h.log.Error("failed to write bad request response", slog.Any("error", err))
+		}
+		return
+	}
+
+	userID, err := strconv.ParseInt(userIDRaw, 10, 64)
+	if err != nil {
+		if writeErr := response.WriteError(w, http.StatusBadRequest, "invalid user_id"); writeErr != nil {
+			h.log.Error("failed to write bad request response", slog.Any("error", writeErr))
+		}
+		return
+	}
+
+	chart, err := h.service.GetVolumeChart(r.Context(), userID)
+	if err != nil {
+		statusCode := http.StatusInternalServerError
+		message := "failed to get volume chart"
+
+		if errors.Is(err, service.ErrInvalidUserID) {
+			statusCode = http.StatusBadRequest
+			message = err.Error()
+		}
+
+		h.log.Error("failed to get volume chart",
 			slog.Int("status", statusCode),
 			slog.Int64("user_id", userID),
 			slog.Any("error", err),
