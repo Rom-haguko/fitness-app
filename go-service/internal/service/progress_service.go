@@ -20,43 +20,51 @@ var (
 	ErrInvalidWeight            = errors.New("invalid weight")
 )
 
-type ProgressService struct {}
-
-func NewProgressService() ProgressService {
-	return ProgressService{}
+type ProgressRepository interface {
+	Create(ctx context.Context, log model.ProgressLog) error
 }
 
-func (s ProgressService) CreateProgressLog(ctx context.Context, req dto.CreateProgressLogRequest) (model.ProgressLog, error) {
+type ProgressService struct {
+	repository ProgressRepository
+}
+
+func NewProgressService(repository ProgressRepository) ProgressService {
+	return ProgressService{
+		repository: repository,
+	}
+}
+
+func (s ProgressService) CreateProgressLog(ctx context.Context, req dto.CreateProgressLogRequest) error {
 	if req.UserID <= 0 {
-		return model.ProgressLog{}, ErrInvalidUserID
+		return ErrInvalidUserID
 	}
 
 	if req.WorkoutPlanID <= 0 {
-		return model.ProgressLog{}, ErrInvalidWorkoutPlanID
+		return ErrInvalidWorkoutPlanID
 	}
 
 	if req.WorkoutPlanItemID != nil && *req.WorkoutPlanItemID <= 0 {
-		return model.ProgressLog{}, ErrInvalidWorkoutPlanItemID
+		return ErrInvalidWorkoutPlanItemID
 	}
 
 	if req.ExerciseID != nil && *req.ExerciseID <= 0 {
-		return model.ProgressLog{}, ErrInvalidExerciseID
+		return ErrInvalidExerciseID
 	}
 
 	if req.WorkoutPlanItemID == nil && req.ExerciseID == nil {
-		return model.ProgressLog{}, ErrMissingExerciseReference
+		return ErrMissingExerciseReference
 	}
 
 	if req.Sets <= 0 {
-		return model.ProgressLog{}, ErrInvalidSets
+		return ErrInvalidSets
 	}
 
 	if req.Reps <= 0 {
-		return model.ProgressLog{}, ErrInvalidReps
+		return ErrInvalidReps
 	}
 
 	if req.Weight < 0 {
-		return model.ProgressLog{}, ErrInvalidWeight
+		return ErrInvalidWeight
 	}
 
 	performedAt := req.PerformedAt
@@ -75,5 +83,9 @@ func (s ProgressService) CreateProgressLog(ctx context.Context, req dto.CreatePr
 		PerformedAt:       performedAt,
 	}
 
-	return log, nil
+	if err := s.repository.Create(ctx, log); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -7,7 +7,18 @@ import (
 	"time"
 
 	"github.com/Rom-haguko/fitness-app/go-service/internal/dto"
+	"github.com/Rom-haguko/fitness-app/go-service/internal/model"
 )
+
+type fakeProgressRepository struct {
+	createdLog model.ProgressLog
+	err        error
+}
+
+func (f *fakeProgressRepository) Create(ctx context.Context, log model.ProgressLog) error {
+	f.createdLog = log
+	return f.err
+}
 
 func TestProgressService_CreateProgressLog_Success(t *testing.T) {
 	t.Parallel()
@@ -15,9 +26,10 @@ func TestProgressService_CreateProgressLog_Success(t *testing.T) {
 	exerciseID := int64(3)
 	performedAt := time.Date(2026, 5, 12, 10, 0, 0, 0, time.UTC)
 
-	svc := NewProgressService()
+	repo := &fakeProgressRepository{}
+	svc := NewProgressService(repo)
 
-	log, err := svc.CreateProgressLog(context.Background(), dto.CreateProgressLogRequest{
+	err := svc.CreateProgressLog(context.Background(), dto.CreateProgressLogRequest{
 		UserID:        1,
 		WorkoutPlanID: 2,
 		ExerciseID:    &exerciseID,
@@ -30,32 +42,32 @@ func TestProgressService_CreateProgressLog_Success(t *testing.T) {
 		t.Fatalf("expected nil error, got %v", err)
 	}
 
-	if log.UserID != 1 {
-		t.Fatalf("expected user id 1, got %d", log.UserID)
+	if repo.createdLog.UserID != 1 {
+		t.Fatalf("expected user id 1, got %d", repo.createdLog.UserID)
 	}
 
-	if log.WorkoutPlanID != 2 {
-		t.Fatalf("expected workout plan id 2, got %d", log.WorkoutPlanID)
+	if repo.createdLog.WorkoutPlanID != 2 {
+		t.Fatalf("expected workout plan id 2, got %d", repo.createdLog.WorkoutPlanID)
 	}
 
-	if log.ExerciseID == nil || *log.ExerciseID != exerciseID {
-		t.Fatalf("expected exercise id %d, got %v", exerciseID, log.ExerciseID)
+	if repo.createdLog.ExerciseID == nil || *repo.createdLog.ExerciseID != exerciseID {
+		t.Fatalf("expected exercise id %d, got %v", exerciseID, repo.createdLog.ExerciseID)
 	}
 
-	if log.Sets != 4 {
-		t.Fatalf("expected sets 4, got %d", log.Sets)
+	if repo.createdLog.Sets != 4 {
+		t.Fatalf("expected sets 4, got %d", repo.createdLog.Sets)
 	}
 
-	if log.Reps != 10 {
-		t.Fatalf("expected reps 10, got %d", log.Reps)
+	if repo.createdLog.Reps != 10 {
+		t.Fatalf("expected reps 10, got %d", repo.createdLog.Reps)
 	}
 
-	if log.Weight != 60.5 {
-		t.Fatalf("expected weight 60.5, got %f", log.Weight)
+	if repo.createdLog.Weight != 60.5 {
+		t.Fatalf("expected weight 60.5, got %f", repo.createdLog.Weight)
 	}
 
-	if !log.PerformedAt.Equal(performedAt) {
-		t.Fatalf("expected performed_at %v, got %v", performedAt, log.PerformedAt)
+	if !repo.createdLog.PerformedAt.Equal(performedAt) {
+		t.Fatalf("expected performed_at %v, got %v", performedAt, repo.createdLog.PerformedAt)
 	}
 }
 
@@ -64,9 +76,10 @@ func TestProgressService_CreateProgressLog_DefaultPerformedAt(t *testing.T) {
 
 	exerciseID := int64(3)
 
-	svc := NewProgressService()
+	repo := &fakeProgressRepository{}
+	svc := NewProgressService(repo)
 
-	log, err := svc.CreateProgressLog(context.Background(), dto.CreateProgressLogRequest{
+	err := svc.CreateProgressLog(context.Background(), dto.CreateProgressLogRequest{
 		UserID:        1,
 		WorkoutPlanID: 2,
 		ExerciseID:    &exerciseID,
@@ -78,7 +91,7 @@ func TestProgressService_CreateProgressLog_DefaultPerformedAt(t *testing.T) {
 		t.Fatalf("expected nil error, got %v", err)
 	}
 
-	if log.PerformedAt.IsZero() {
+	if repo.createdLog.PerformedAt.IsZero() {
 		t.Fatal("expected performed_at to be set")
 	}
 }
@@ -179,18 +192,44 @@ func TestProgressService_CreateProgressLog_ValidationErrors(t *testing.T) {
 		},
 	}
 
-	svc := NewProgressService()
-
 	for _, tt := range tests {
 		tt := tt
 
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			_, err := svc.CreateProgressLog(context.Background(), tt.request)
+			repo := &fakeProgressRepository{}
+			svc := NewProgressService(repo)
+
+			err := svc.CreateProgressLog(context.Background(), tt.request)
 			if !errors.Is(err, tt.expectedErr) {
 				t.Fatalf("expected error %v, got %v", tt.expectedErr, err)
 			}
 		})
+	}
+}
+
+func TestProgressService_CreateProgressLog_RepositoryError(t *testing.T) {
+	t.Parallel()
+
+	exerciseID := int64(3)
+	expectedErr := errors.New("repository error")
+
+	repo := &fakeProgressRepository{
+		err: expectedErr,
+	}
+	svc := NewProgressService(repo)
+
+	err := svc.CreateProgressLog(context.Background(), dto.CreateProgressLogRequest{
+		UserID:        1,
+		WorkoutPlanID: 2,
+		ExerciseID:    &exerciseID,
+		Sets:          4,
+		Reps:          10,
+		Weight:        60.5,
+	})
+
+	if !errors.Is(err, expectedErr) {
+		t.Fatalf("expected error %v, got %v", expectedErr, err)
 	}
 }
