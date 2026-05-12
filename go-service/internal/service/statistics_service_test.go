@@ -10,9 +10,10 @@ import (
 )
 
 type fakeStatisticsRepository struct {
-	summary model.StatisticsSummary
+	summary          model.StatisticsSummary
 	bodyWeightPoints []model.BodyWeightPoint
-	err     error
+	volumePoints     []model.VolumePoint
+	err              error
 }
 
 func (f fakeStatisticsRepository) GetSummary(ctx context.Context, userID int64) (model.StatisticsSummary, error) {
@@ -21,6 +22,10 @@ func (f fakeStatisticsRepository) GetSummary(ctx context.Context, userID int64) 
 
 func (f fakeStatisticsRepository) GetBodyWeightPoints(ctx context.Context, userID int64) ([]model.BodyWeightPoint, error) {
 	return f.bodyWeightPoints, f.err
+}
+
+func (f fakeStatisticsRepository) GetVolumePoints(ctx context.Context, userID int64) ([]model.VolumePoint, error) {
+	return f.volumePoints, f.err
 }
 
 func TestStatisticsService_GetSummary_Success(t *testing.T) {

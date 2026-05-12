@@ -10,6 +10,7 @@ import (
 type StatisticsRepository interface {
 	GetSummary(ctx context.Context, userID int64) (model.StatisticsSummary, error)
 	GetBodyWeightPoints(ctx context.Context, userID int64) ([]model.BodyWeightPoint, error)
+	GetVolumePoints(ctx context.Context, userID int64) ([]model.VolumePoint, error)
 }
 
 type StatisticsService struct {
@@ -41,7 +42,6 @@ func (s StatisticsService) GetSummary(ctx context.Context, userID int64) (dto.St
 	}, nil
 }
 
-
 func (s StatisticsService) GetBodyWeightChart(ctx context.Context, userID int64) (dto.BodyWeightChartResponse, error) {
 	if userID <= 0 {
 		return dto.BodyWeightChartResponse{}, ErrInvalidUserID
@@ -61,6 +61,30 @@ func (s StatisticsService) GetBodyWeightChart(ctx context.Context, userID int64)
 	}
 
 	return dto.BodyWeightChartResponse{
+		UserID: userID,
+		Points: responsePoints,
+	}, nil
+}
+
+func (s StatisticsService) GetVolumeChart(ctx context.Context, userID int64) (dto.VolumeChartResponse, error) {
+	if userID <= 0 {
+		return dto.VolumeChartResponse{}, ErrInvalidUserID
+	}
+
+	points, err := s.repository.GetVolumePoints(ctx, userID)
+	if err != nil {
+		return dto.VolumeChartResponse{}, err
+	}
+
+	responsePoints := make([]dto.VolumePoint, 0, len(points))
+	for _, point := range points {
+		responsePoints = append(responsePoints, dto.VolumePoint{
+			Date:   point.Date,
+			Volume: point.Volume,
+		})
+	}
+
+	return dto.VolumeChartResponse{
 		UserID: userID,
 		Points: responsePoints,
 	}, nil

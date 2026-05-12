@@ -86,3 +86,39 @@ func (r StatisticsRepository) GetBodyWeightPoints(ctx context.Context, userID in
 
 	return points, nil
 }
+
+func (r StatisticsRepository) GetVolumePoints(ctx context.Context, userID int64) ([]model.VolumePoint, error) {
+	const query = `
+		SELECT
+			TO_CHAR(performed_at::date, 'YYYY-MM-DD') AS date,
+			COALESCE(SUM(sets * reps * weight), 0)::float8 AS volume
+		FROM fitness_tracker.progress_logs
+		WHERE user_id = $1
+		GROUP BY performed_at::date
+		ORDER BY performed_at::date ASC
+	`
+
+	rows, err := r.db.Query(ctx, query, userID)
+	if err != nil {
+		return nil, fmt.Errorf("query volume points: %w", err)
+	}
+	defer rows.Close()
+
+	var points []model.VolumePoint
+
+	for rows.Next() {
+		var point model.VolumePoint
+
+		if err := rows.Scan(&point.Date, &point.Volume); err != nil {
+			return nil, fmt.Errorf("scan volume point: %w", err)
+		}
+
+		points = append(points, point)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate volume points: %w", err)
+	}
+
+	return points, nil
+}
