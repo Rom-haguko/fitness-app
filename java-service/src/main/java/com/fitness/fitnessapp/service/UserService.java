@@ -2,6 +2,8 @@ package com.fitness.fitnessapp.service;
 
 import com.fitness.fitnessapp.dto.auth.RegisterRequest;
 import com.fitness.fitnessapp.entity.User;
+import com.fitness.fitnessapp.exception.NotFoundException;
+import com.fitness.fitnessapp.logging.LoggingUtils;
 import com.fitness.fitnessapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -21,14 +23,17 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public void createUser(RegisterRequest request) {
-        log.info("Saving user to database",kv("username",request.getUsername()));
+        log.info("Trying to save user to database",kv("username",request.getUsername()));
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole("User");
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        LoggingUtils.logEntityCreated(log, "User", savedUser.getId());
+        LoggingUtils.logUserAction(log, "USER_REGISTERED", savedUser.getId(), savedUser.getUsername());
     }
 
     public Optional<User> findByUsername(String username){
@@ -36,7 +41,10 @@ public class UserService {
     }
     public User getById(Long id){
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> {
+                    log.warn("User lookup failed", kv("user_id", id));
+                    return new NotFoundException("User not found with id: " + id);
+                });
     }
     public boolean existsByUsername(String username){
         return userRepository.existsByUsername(username);
