@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class ExerciseDto {
     private String name;
     private int sets;
-    private int reps;
+    private String reps;
 }
