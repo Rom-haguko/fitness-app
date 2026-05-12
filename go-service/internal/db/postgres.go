@@ -21,17 +21,29 @@ func NewPostgresPool(ctx context.Context, cfg config.Config) (*pgxpool.Pool, err
 	poolConfig.MaxConnIdleTime = 5 * time.Minute
 	poolConfig.HealthCheckPeriod = 1 * time.Minute
 
-	pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
-	if err != nil {
-		return nil, fmt.Errorf("create postgres pool: %w", err)
-	}
+	var lastErr error
 
-	pingCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
+	for attempt := 1; attempt <= 10; attempt++ {
+		pool, err := pgxpool.NewWithConfig(ctx, poolConfig)
+		if err != nil {
+			lastErr = err
+			time.Sleep(2 * time.Second)
+			continue
+		}
 
-	if err := pool.Ping(pingCtx); err != nil {
+		pingCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+		err = pool.Ping(pingCtx)
+		cancel()
+
+		if err == nil {
+			return pool, nil
+		}
+
+		lastErr = err
 		pool.Close()
-		return nil, fmt.Errorf("ping postgres: %w", err)
+
+		time.Sleep(2 * time.Second)
 	}
-	return pool, nil
+
+	return nil, fmt.Errorf("connect postgres after retries: %w", lastErr)
 }

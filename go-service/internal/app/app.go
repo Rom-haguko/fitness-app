@@ -10,6 +10,8 @@ import (
 	"github.com/Rom-haguko/fitness-app/go-service/internal/config"
 	"github.com/Rom-haguko/fitness-app/go-service/internal/db"
 	"github.com/Rom-haguko/fitness-app/go-service/internal/httpserver"
+	"github.com/Rom-haguko/fitness-app/go-service/internal/repository"
+	"github.com/Rom-haguko/fitness-app/go-service/internal/service"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -26,7 +28,10 @@ func New(ctx context.Context, cfg config.Config, log *slog.Logger) (*App, error)
 		return nil, fmt.Errorf("new postgres pool: %w", err)
 	}
 
-	router := httpserver.NewRouter(log)
+	progressRepository := repository.NewProgressRepository(pool)
+	progressService := service.NewProgressService(progressRepository)
+
+	router := httpserver.NewRouter(log, progressService)
 
 	server := &http.Server{
 		Addr:              cfg.Addr(),
@@ -51,7 +56,7 @@ func (a *App) Run() error {
 		slog.String("env", a.Config.AppEnv),
 	)
 
-	if err := a.Server.ListenAndServe(); err != nil {
+	if err := a.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		return fmt.Errorf("listen and serve: %w", err)
 	}
 
