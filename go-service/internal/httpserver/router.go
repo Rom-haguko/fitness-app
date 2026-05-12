@@ -13,7 +13,7 @@ func NewRouter(log *slog.Logger) http.Handler {
 	healthHandler := handler.NewHealthHandler()
 
 	mux.HandleFunc("/health", healthHandler.Health)
-	
+
 	var root http.Handler = mux
 	root = LoggingMiddleware(log, RecoverMiddleware(log, root))
 	return root
