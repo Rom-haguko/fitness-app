@@ -44,4 +44,12 @@ public class WorkoutPlan {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<WorkoutPlanItem> items = new ArrayList<>();
+
+    public void addItem(WorkoutPlanItem item) {
+        if (this.items == null) {
+            this.items = new java.util.ArrayList<>();
+        }
+        this.items.add(item);
+        item.setWorkoutPlan(this);
+    }
 }
