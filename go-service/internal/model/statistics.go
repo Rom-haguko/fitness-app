@@ -9,3 +9,8 @@ type StatisticsSummary struct {
 	CurrentBodyWeight *float64
 	TotalVolume       float64
 }
+
+type BodyWeightPoint struct {
+	Date   string
+	Weight float64
+}
