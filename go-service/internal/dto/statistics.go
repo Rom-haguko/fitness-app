@@ -19,3 +19,13 @@ type BodyWeightPoint struct {
 	Date   string  `json:"date"`
 	Weight float64 `json:"weight"`
 }
+
+type VolumeChartResponse struct {
+	UserID int64         `json:"user_id"`
+	Points []VolumePoint `json:"points"`
+}
+
+type VolumePoint struct {
+	Date   string  `json:"date"`
+	Volume float64 `json:"volume"`
+}

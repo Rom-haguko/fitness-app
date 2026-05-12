@@ -14,3 +14,8 @@ type BodyWeightPoint struct {
 	Date   string
 	Weight float64
 }
+
+type VolumePoint struct {
+	Date   string
+	Volume float64
+}
