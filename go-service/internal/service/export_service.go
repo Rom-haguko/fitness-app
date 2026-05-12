@@ -46,7 +46,7 @@ func (s ExportService) ExportPlan(ctx context.Context, req dto.ExportPlanRequest
 	}
 
 	format := strings.ToLower(strings.TrimSpace(req.Format))
-	if format != "txt" {
+	if format != "txt" && format != "pdf" {
 		return ExportResult{}, ErrInvalidExportFormat
 	}
 
@@ -82,14 +82,32 @@ func (s ExportService) ExportPlan(ctx context.Context, req dto.ExportPlanRequest
 		}
 	}
 
-	content, err := exporter.BuildTXT(req)
-	if err != nil {
-		return ExportResult{}, fmt.Errorf("build txt export: %w", err)
-	}
+	switch format {
+	case "txt":
+		content, err := exporter.BuildTXT(req)
+		if err != nil {
+			return ExportResult{}, fmt.Errorf("build txt export: %w", err)
+		}
 
-	return ExportResult{
-		Content:     content,
-		ContentType: "text/plain; charset=utf-8",
-		FileName:    fmt.Sprintf("plan_%d.txt", req.PlanID),
-	}, nil
+		return ExportResult{
+			Content:     content,
+			ContentType: "text/plain; charset=utf-8",
+			FileName:    fmt.Sprintf("plan_%d.txt", req.PlanID),
+		}, nil
+
+	case "pdf":
+		content, err := exporter.BuildPDF(req)
+		if err != nil {
+			return ExportResult{}, fmt.Errorf("build pdf export: %w", err)
+		}
+
+		return ExportResult{
+			Content:     content,
+			ContentType: "application/pdf",
+			FileName:    fmt.Sprintf("plan_%d.pdf", req.PlanID),
+		}, nil
+
+	default:
+		return ExportResult{}, ErrInvalidExportFormat
+	}
 }

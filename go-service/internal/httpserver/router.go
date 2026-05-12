@@ -30,7 +30,6 @@ func NewRouter(
 	mux.HandleFunc("/api/v1/statistics/volume", statisticsHandler.GetVolumeChart)
 	mux.HandleFunc("/api/v1/export/plan", exportHandler.ExportPlan)
 
-
 	var root http.Handler = mux
 	root = RecoverMiddleware(log, root)
 	root = LoggingMiddleware(log, root)

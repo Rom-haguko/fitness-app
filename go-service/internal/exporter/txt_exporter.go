@@ -10,16 +10,8 @@ import (
 func BuildTXT(req dto.ExportPlanRequest) ([]byte, error) {
 	var buf bytes.Buffer
 
-	if _, err := fmt.Fprintf(&buf, "Plan: %s\n", req.PlanName); err != nil {
+	if _, err := fmt.Fprintf(&buf, "%s\n\n", req.PlanName); err != nil {
 		return nil, fmt.Errorf("write plan name: %w", err)
-	}
-
-	if _, err := fmt.Fprintf(&buf, "User ID: %d\n", req.UserID); err != nil {
-		return nil, fmt.Errorf("write user id: %w", err)
-	}
-
-	if _, err := fmt.Fprintf(&buf, "Plan ID: %d\n\n", req.PlanID); err != nil {
-		return nil, fmt.Errorf("write plan id: %w", err)
 	}
 
 	for _, day := range req.Days {

@@ -72,7 +72,7 @@ func TestExportService_ExportPlan_ValidationErrors(t *testing.T) {
 			name: "invalid format",
 			request: func() dto.ExportPlanRequest {
 				req := validExportPlanRequest()
-				req.Format = "pdf"
+				req.Format = "docx"
 				return req
 			}(),
 			expectedErr: ErrInvalidExportFormat,
@@ -177,5 +177,31 @@ func validExportPlanRequest() dto.ExportPlanRequest {
 				},
 			},
 		},
+	}
+}
+
+func TestExportService_ExportPlan_PDFSuccess(t *testing.T) {
+	t.Parallel()
+
+	req := validExportPlanRequest()
+	req.Format = "pdf"
+
+	svc := NewExportService()
+
+	result, err := svc.ExportPlan(context.Background(), req)
+	if err != nil {
+		t.Fatalf("expected nil error, got %v", err)
+	}
+
+	if result.ContentType != "application/pdf" {
+		t.Fatalf("expected content type application/pdf, got %s", result.ContentType)
+	}
+
+	if result.FileName != "plan_1.pdf" {
+		t.Fatalf("expected filename plan_1.pdf, got %s", result.FileName)
+	}
+
+	if len(result.Content) == 0 {
+		t.Fatal("expected non-empty pdf content")
 	}
 }

@@ -13,14 +13,9 @@ func BuildPDF(req dto.ExportPlanRequest) ([]byte, error) {
 	pdf.AddPage()
 
 	pdf.SetFont("Arial", "B", 16)
-	pdf.Cell(0, 10, fmt.Sprintf("Plan: %s", req.PlanName))
+	pdf.Cell(0, 10, req.PlanName)
 	pdf.Ln(10)
 
-	pdf.SetFont("Arial", "", 12)
-	pdf.Cell(0, 8, fmt.Sprintf("User ID: %d", req.UserID))
-	pdf.Ln(8)
-	pdf.Cell(0, 8, fmt.Sprintf("Plan ID: %d", req.PlanID))
-	pdf.Ln(12)
 
 	for _, day := range req.Days {
 		pdf.SetFont("Arial", "B", 13)
