@@ -31,7 +31,10 @@ func New(ctx context.Context, cfg config.Config, log *slog.Logger) (*App, error)
 	progressRepository := repository.NewProgressRepository(pool)
 	progressService := service.NewProgressService(progressRepository)
 
-	router := httpserver.NewRouter(log, progressService)
+	bodyWeightRepository := repository.NewBodyWeightRepository(pool)
+	bodyWeightService := service.NewBodyWeightService(bodyWeightRepository)
+
+	router := httpserver.NewRouter(log, progressService, bodyWeightService)
 
 	server := &http.Server{
 		Addr:              cfg.Addr(),
