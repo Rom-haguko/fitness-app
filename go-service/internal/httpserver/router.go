@@ -12,6 +12,7 @@ func NewRouter(
 	progressService handler.ProgressService,
 	bodyWeightService handler.BodyWeightService,
 	statisticsService handler.StatisticsService,
+	exportService handler.ExportService,
 ) http.Handler {
 	mux := http.NewServeMux()
 
@@ -19,6 +20,7 @@ func NewRouter(
 	progressHandler := handler.NewProgressHandler(progressService, log)
 	bodyWeightHandler := handler.NewBodyWeightHandler(bodyWeightService, log)
 	statisticsHandler := handler.NewStatisticsHandler(statisticsService, log)
+	exportHandler := handler.NewExportHandler(exportService, log)
 
 	mux.HandleFunc("/health", healthHandler.Health)
 	mux.HandleFunc("/api/v1/progress/logs", progressHandler.CreateProgressLog)
@@ -26,6 +28,8 @@ func NewRouter(
 	mux.HandleFunc("/api/v1/statistics/summary", statisticsHandler.GetSummary)
 	mux.HandleFunc("/api/v1/statistics/body-weight", statisticsHandler.GetBodyWeightChart)
 	mux.HandleFunc("/api/v1/statistics/volume", statisticsHandler.GetVolumeChart)
+	mux.HandleFunc("/api/v1/export/plan", exportHandler.ExportPlan)
+
 
 	var root http.Handler = mux
 	root = RecoverMiddleware(log, root)
