@@ -11,11 +11,16 @@ import (
 
 type fakeStatisticsRepository struct {
 	summary model.StatisticsSummary
+	bodyWeightPoints []model.BodyWeightPoint
 	err     error
 }
 
 func (f fakeStatisticsRepository) GetSummary(ctx context.Context, userID int64) (model.StatisticsSummary, error) {
 	return f.summary, f.err
+}
+
+func (f fakeStatisticsRepository) GetBodyWeightPoints(ctx context.Context, userID int64) ([]model.BodyWeightPoint, error) {
+	return f.bodyWeightPoints, f.err
 }
 
 func TestStatisticsService_GetSummary_Success(t *testing.T) {

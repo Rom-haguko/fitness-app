@@ -51,3 +51,38 @@ func (r StatisticsRepository) GetSummary(ctx context.Context, userID int64) (mod
 
 	return summary, nil
 }
+
+func (r StatisticsRepository) GetBodyWeightPoints(ctx context.Context, userID int64) ([]model.BodyWeightPoint, error) {
+	const query = `
+		SELECT
+			TO_CHAR(recorded_at::date, 'YYYY-MM-DD') AS date,
+			weight::float8 AS weight
+		FROM fitness_tracker.body_weight_logs
+		WHERE user_id = $1
+		ORDER BY recorded_at ASC
+	`
+
+	rows, err := r.db.Query(ctx, query, userID)
+	if err != nil {
+		return nil, fmt.Errorf("query body weight points: %w", err)
+	}
+	defer rows.Close()
+
+	var points []model.BodyWeightPoint
+
+	for rows.Next() {
+		var point model.BodyWeightPoint
+
+		if err := rows.Scan(&point.Date, &point.Weight); err != nil {
+			return nil, fmt.Errorf("scan body weight point: %w", err)
+		}
+
+		points = append(points, point)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate body weight points: %w", err)
+	}
+
+	return points, nil
+}
