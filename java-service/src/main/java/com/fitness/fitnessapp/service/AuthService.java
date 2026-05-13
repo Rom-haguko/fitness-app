@@ -17,7 +17,12 @@ public class AuthService {
     private final UserService userService;
 
     @Transactional
-    public void register(RegisterRequest request){
+    public void registerUser(RegisterRequest request){
+        validateRegistration(request);
+        userService.createUser(request);
+    }
+
+    public void validateRegistration(RegisterRequest request){
         if (userService.existsByUsername(request.getUsername())){
             log.warn("Registration failed: username already taken",
                     kv("username", request.getUsername()));
@@ -28,7 +33,8 @@ public class AuthService {
                     kv("email", request.getEmail()));
             throw new ValidationException("Email already exists");
         }
-
-        userService.createUser(request);
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new ValidationException("Passwords do not match");
+        }
     }
 }

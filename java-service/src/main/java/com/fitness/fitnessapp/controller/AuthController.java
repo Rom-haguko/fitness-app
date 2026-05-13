@@ -48,7 +48,7 @@ public class AuthController {
         }
 
         try{
-            authService.register(request);
+            authService.registerUser(request);
             log.info("Registration successful", kv("username", request.getUsername()));
         } catch (RuntimeException e) {
             log.error("Registration failed", kv("error", e.getMessage()));
