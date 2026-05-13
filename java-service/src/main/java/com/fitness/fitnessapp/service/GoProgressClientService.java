@@ -1,5 +1,6 @@
 package com.fitness.fitnessapp.service;
 
+import com.fitness.fitnessapp.dto.export.ExportPlanRequest;
 import com.fitness.fitnessapp.dto.progress.ProgressSummaryResponse;
 import com.fitness.fitnessapp.dto.progress.SaveWorkoutLogRequest;
 import com.fitness.fitnessapp.exception.ExternalServiceException;
@@ -63,18 +64,14 @@ public class GoProgressClientService {
         }
     };
 
-    public ResponseEntity<byte[]> exportPlan(Long userId, Long planId, String format){
+    public ResponseEntity<byte[]> exportPlan(ExportPlanRequest request){
         long startTime = System.currentTimeMillis();
         log.info("Executing exportPlan call to Go service",
-                kv("user_id", userId), kv("plan_id", planId), kv("format", format));
+                kv("user_id", request.getUserId()), kv("plan_id", request.getPlanId()), kv("format", request.getFormat()));
         try {
-            ResponseEntity<byte[]> response = goWebClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/api/v1/export/plan")
-                            .queryParam("user_id", userId)
-                            .queryParam("plan_id", planId)
-                            .queryParam("format", format)
-                            .build())
+            ResponseEntity<byte[]> response = goWebClient.post()
+                    .uri("/api/v1/export/plan")
+                    .body(Mono.just(request), ExportPlanRequest.class)
                     .retrieve()
                     .toEntity(byte[].class)
                     .block();
@@ -85,6 +82,16 @@ public class GoProgressClientService {
             LoggingUtils.logExternalCallError(log, "go-service", "/export/plan",
                     System.currentTimeMillis() - startTime, e.getMessage());
             throw new ExternalServiceException("Failed to export plan from Go service", e);
+        }
+    }
+
+    public boolean healthCheck() {
+        try {
+            goWebClient.get().uri("/health").retrieve().toBodilessEntity().block();
+            return true;
+        } catch (Exception e) {
+            log.warn("Go service health check failed", kv("error", e.getMessage()));
+            return false;
         }
     }
 };
