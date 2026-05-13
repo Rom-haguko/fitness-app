@@ -4,14 +4,17 @@ import com.fitness.fitnessapp.dto.progress.ProgressSummaryResponse;
 import com.fitness.fitnessapp.dto.progress.SaveWorkoutLogRequest;
 import com.fitness.fitnessapp.exception.ExternalServiceException;
 import com.fitness.fitnessapp.logging.LoggingUtils;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
+@Service
 public class GoProgressClientService {
     private static final Logger log = LoggerFactory.getLogger(GoProgressClientService.class);
     private final WebClient goWebClient;
