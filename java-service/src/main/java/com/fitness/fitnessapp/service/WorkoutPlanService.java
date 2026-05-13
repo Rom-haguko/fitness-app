@@ -69,14 +69,20 @@ public class WorkoutPlanService {
         return savedPlan;
     };
 
+    @Transactional(readOnly = true)
     public List<WorkoutPlan> getUserPlans(Long userId){
         log.debug("Fetching plan history", kv("user_id", userId));
         return workoutPlanRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
     };
 
+    @Transactional(readOnly = true)
     public WorkoutPlan getUserPlan(Long userId, Long planId){
         log.debug("Fetching plan details", kv("user_id", userId), kv("plan_id", planId));
-        return workoutPlanRepository.findByIdAndUserId(planId,userId)
+        WorkoutPlan plan = workoutPlanRepository.findByIdAndUserId(planId,userId)
                 .orElseThrow(() -> new NotFoundException("Workout plan not found"));
+        if (plan.getItems() != null) {
+            plan.getItems().size();
+        }
+        return plan;
     };
 }
