@@ -6,7 +6,7 @@ class WorkoutRequest(BaseModel):
     goal: str
     level: str
     days_per_week: int
-    split_type: Optional[str] = "full_body"
+    split_type: str
 
 class ExerciseSchema(BaseModel):
     name: str
@@ -15,10 +15,14 @@ class ExerciseSchema(BaseModel):
     muscle_group: str
     description: str
 
-class WorkoutResponse(BaseModel):
-    id: int
-    goal: str
+class DayPlanSchema(BaseModel):
+    day: int
+    focus: str
     exercises: List[ExerciseSchema]
 
-    class Config:
-        from_attributes = True
+class WorkoutResponse(BaseModel):
+    goal: str
+    level: str
+    days_per_week: int
+    split_type: str
+    workout_plan: List[DayPlanSchema]
