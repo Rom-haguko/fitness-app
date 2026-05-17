@@ -46,7 +46,7 @@ public class PythonPlanClientService {
                     .uri("/")
                     .retrieve()
                     .toBodilessEntity()
-                    .block(java.time.Duration.ofSeconds(2));
+                    .block(java.time.Duration.ofSeconds(10));
             return true;
         } catch (Exception e) {
             log.warn("Health check failed for Python service", kv("error", e.getMessage()));

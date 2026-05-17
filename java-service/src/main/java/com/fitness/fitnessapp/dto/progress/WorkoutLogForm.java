@@ -13,8 +13,8 @@ public class WorkoutLogForm {
     @NotNull(message = "Plan id is missing")
     private Long workoutPlanId;
 
-    @NotNull(message = "Exercise id is missing")
-    private Long exerciseId;
+    @NotNull(message = "Item id is missing")
+    private Long workoutPlanItemId;
 
     @Min(value = 1, message = "Sets must be at least 1")
     private int sets;

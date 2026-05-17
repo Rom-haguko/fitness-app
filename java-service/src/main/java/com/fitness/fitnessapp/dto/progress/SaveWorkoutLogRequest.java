@@ -17,8 +17,8 @@ public class SaveWorkoutLogRequest {
     @JsonProperty("workout_plan_id")
     private long workoutPlanId;
 
-    @JsonProperty("exercise_id")
-    private long exerciseId;
+    @JsonProperty("workout_plan_item_id")
+    private long workoutPlanItemId;
 
     private int sets;
     private int reps;
