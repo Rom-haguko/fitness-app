@@ -47,7 +47,7 @@ public class QuestionnaireController {
         User user = userService.findByUsername(principal.getName())
                 .orElseThrow(() -> new NotFoundException("Current user not found"));
         log.info("User is generating a new plan", kv("username", user.getUsername()));
-        GeneratePlanResponse response = workoutPlanService.generatePlan(form);
+        GeneratePlanResponse response = workoutPlanService.generatePlan(user, form);
         WorkoutPlan savedPlan = workoutPlanService.saveGeneratedPlan(user.getId(),form,response);
         LoggingUtils.logUserAction(log, "PLAN_GENERATION_SUCCESS", user.getId(), user.getUsername());
 
