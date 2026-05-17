@@ -34,7 +34,7 @@
                     </p>
                     <div class="d-flex justify-content-between">
                         <a th:href="@{'/plans/' + ${plan.id}}" class="btn btn-primary btn-sm">View Details</a>
-                        <a th:href="@{'/progress/log?planId=' + ${plan.id}}" class="btn btn-outline-success btn-sm">Log Workout</a>
+                        <a th:href="@{/plans/{id}(id=${plan.id})}" class="btn btn-outline-success btn-sm">Log Workout</a>
                     </div>
                 </div>
             </div>

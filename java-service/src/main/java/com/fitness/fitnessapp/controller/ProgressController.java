@@ -39,7 +39,7 @@ public class ProgressController {
         return "progress/summary";
     };
     @GetMapping("/log")
-    public String showWorkoutLogForm(@RequestParam("plan_id") Long workoutPlanId, @RequestParam("item_id") Long workoutPlanItemId, Model model){
+    public String showWorkoutLogForm(@RequestParam("planId") Long workoutPlanId, @RequestParam("itemId") Long workoutPlanItemId, Model model){
         WorkoutLogForm form = new WorkoutLogForm();
         form.setWorkoutPlanId(workoutPlanId);
         form.setWorkoutPlanItemId(workoutPlanItemId);

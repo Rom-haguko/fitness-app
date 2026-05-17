@@ -5,59 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Fitness Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .transition-hover { transition: transform 0.2s; }
+        .transition-hover:hover { transform: translateY(-5px); }
+    </style>
 </head>
 <body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="#">FitnessApp</a>
-        <form th:action="@{/logout}" method="post" class="d-flex">
-            <button class="btn btn-outline-light btn-sm" type="submit">Logout</button>
-        </form>
+        <a class="navbar-brand fw-bold" href="/dashboard">FitnessApp</a>
+        <div class="d-flex align-items-center">
+            <span class="text-light me-3 small d-none d-sm-inline" th:text="${username}">User</span>
+            <form th:action="@{/logout}" method="post">
+                <button class="btn btn-outline-light btn-sm" type="submit">Logout</button>
+            </form>
+        </div>
     </div>
 </nav>
 
 <div class="container py-5">
-    <div class="row mb-4">
+    <div class="row mb-5">
         <div class="col">
-            <h1 class="h2">Dashboard</h1>
-            <p class="text-muted">Welcome back, <span class="fw-bold text-primary" th:text="${username}">User</span>!</p>
+            <h1 class="display-5 fw-bold">Dashboard</h1>
+            <p class="lead text-muted">Welcome back, <span class="text-primary fw-semibold" th:text="${username}">User</span>! Ready for today's session?</p>
         </div>
     </div>
 
+    <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm mb-4" role="alert">
+        <span th:if="${param.success[0] == 'log_saved'}"><strong>Success!</strong> Your workout has been recorded.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div class="row g-4">
+
         <div class="col-md-4">
             <div class="card h-100 shadow-sm border-0 rounded-4 transition-hover">
                 <div class="card-body p-4 text-center">
                     <div class="display-6 text-primary mb-3">📝</div>
-                    <h4>Generate Plan</h4>
+                    <h4 class="fw-bold">Generate Plan</h4>
                     <p class="text-muted small">Create a new AI-powered workout program tailored to your goals.</p>
-                    <a th:href="@{/questionnaire}" class="btn btn-primary stretched-link">Start Now</a>
+                    <a th:href="@{/questionnaire}" class="btn btn-primary w-100 py-2 rounded-3 stretched-link">Start Questionnaire</a>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0 rounded-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 transition-hover border-top border-success border-5">
                 <div class="card-body p-4 text-center">
-                    <div class="display-6 text-success mb-3">📅</div>
-                    <h4>My Plans</h4>
-                    <p class="text-muted small">Review your current and past training programs.</p>
-                    <a th:href="@{/plans}" class="btn btn-success stretched-link">View History</a>
+                    <div class="display-6 text-success mb-3">💪</div>
+
+                    <div th:if="${latestPlanId != null}">
+                        <h4 class="fw-bold">Log Workout</h4>
+                        <p class="text-muted small">
+                            Ready to train? Continue your active plan:<br>
+                            <span class="badge bg-light text-dark border mt-1" th:text="${latestPlanName}">Active Plan</span>
+                        </p>
+                        <a th:href="@{/plans/{id}(id=${latestPlanId})}" class="btn btn-success w-100 py-2 rounded-3 stretched-link">Start Training</a>
+                    </div>
+
+                    <div th:if="${latestPlanId == null}">
+                        <h4 class="fw-bold">My Plans</h4>
+                        <p class="text-muted small">You don't have any workout plans yet. Generate one to see it here.</p>
+                        <a th:href="@{/plans}" class="btn btn-outline-success w-100 py-2 rounded-3 stretched-link">View History</a>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0 rounded-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 transition-hover">
                 <div class="card-body p-4 text-center">
                     <div class="display-6 text-info mb-3">📈</div>
-                    <h4>My Progress</h4>
-                    <p class="text-muted small">Check your stats, body weight history, and volume charts.</p>
-                    <a th:href="@{/progress}" class="btn btn-info text-white stretched-link">Track Growth</a>
+                    <h4 class="fw-bold">My Progress</h4>
+                    <p class="text-muted small">Check your stats, body weight history, and training volume charts.</p>
+                    <a th:href="@{/progress}" class="btn btn-info text-white w-100 py-2 rounded-3 stretched-link">Analyze Results</a>
                 </div>
             </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-5">
+        <div class="col text-center">
+            <p class="text-muted small">Need to see old programs? <a th:href="@{/plans}" class="text-decoration-none">Browse Plan History</a></p>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

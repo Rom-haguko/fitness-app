@@ -29,7 +29,7 @@
 
                     <form th:action="@{/progress/log}" th:object="${workoutLogForm}" method="post">
                         <input type="hidden" th:field="*{workoutPlanId}">
-                        <input type="hidden" th:field="*{exerciseId}">
+                        <input type="hidden" th:field="*{workoutPlanItemId}">
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Actual Sets</label>
