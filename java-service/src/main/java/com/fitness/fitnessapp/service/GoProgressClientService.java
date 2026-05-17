@@ -106,5 +106,37 @@ public class GoProgressClientService {
                 .toBodilessEntity()
                 .block();
     }
+
+    public Object getBodyWeightChart(Long userId) {
+        long startTime = System.currentTimeMillis();
+        try {
+            Object response = goWebClient.get()
+                    .uri(uri -> uri.path("/api/v1/statistics/body-weight").queryParam("user_id", userId).build())
+                    .retrieve().bodyToMono(Object.class).block();
+            LoggingUtils.logExternalCallSuccess(log, "go-service", "/statistics/body-weight",
+                    System.currentTimeMillis() - startTime, 200);
+            return response;
+        } catch (Exception e) {
+            LoggingUtils.logExternalCallError(log, "go-service", "/statistics/body-weight",
+                    System.currentTimeMillis() - startTime, e.getMessage());
+            return null;
+        }
+    }
+
+    public Object getVolumeChart(Long userId) {
+        long startTime = System.currentTimeMillis();
+        try {
+            Object response = goWebClient.get()
+                    .uri(uri -> uri.path("/api/v1/statistics/volume").queryParam("user_id", userId).build())
+                    .retrieve().bodyToMono(Object.class).block();
+            LoggingUtils.logExternalCallSuccess(log, "go-service", "/statistics/volume",
+                    System.currentTimeMillis() - startTime, 200);
+            return response;
+        } catch (Exception e) {
+            LoggingUtils.logExternalCallError(log, "go-service", "/statistics/volume",
+                    System.currentTimeMillis() - startTime, e.getMessage());
+            return null;
+        }
+    }
 };
 
