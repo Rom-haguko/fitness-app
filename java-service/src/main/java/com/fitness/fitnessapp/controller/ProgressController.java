@@ -37,10 +37,10 @@ public class ProgressController {
         return "progress/summary";
     };
     @GetMapping("/log")
-    public String showWorkoutLogForm(@RequestParam Long workoutPlanId, @RequestParam Long exerciseId, Model model){
+    public String showWorkoutLogForm(@RequestParam("plan_id") Long workoutPlanId, @RequestParam("item_id") Long workoutPlanItemId, Model model){
         WorkoutLogForm form = new WorkoutLogForm();
         form.setWorkoutPlanId(workoutPlanId);
-        form.setExerciseId(exerciseId);
+        form.setWorkoutPlanItemId(workoutPlanItemId);
         model.addAttribute("workoutLogForm", form);
         return "progress/log-workout";
     };
@@ -54,7 +54,7 @@ public class ProgressController {
                 .orElseThrow(() -> new NotFoundException("User not found"));
         log.info("User is recording workout logs", kv("username", user.getUsername()));
         SaveWorkoutLogRequest request = new SaveWorkoutLogRequest(
-                user.getId(), form.getWorkoutPlanId(), form.getExerciseId(),
+                user.getId(), form.getWorkoutPlanId(), form.getWorkoutPlanItemId(),
                 form.getSets(), form.getReps(), form.getWeight()
         );
         goProgressClientService.saveWorkoutLog(request);
