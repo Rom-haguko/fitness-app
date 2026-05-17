@@ -1,9 +1,6 @@
 from fastapi import FastAPI
 from app.api import workout_router
-from app.db.database import Base, engine
 
-# Авто-создание таблиц (если схема fitness_tracker существует)
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Fitness Python Service")
 
