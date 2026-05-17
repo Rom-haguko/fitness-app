@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GeneratePlanRequest {
+    @JsonProperty("user_id")
+    private long userId;
+
     private String goal;
 
     private String level;
