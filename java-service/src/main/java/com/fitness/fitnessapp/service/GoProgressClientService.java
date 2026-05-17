@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
 @Service
@@ -30,12 +32,12 @@ public class GoProgressClientService {
                 kv("user_id", request.getUserId()));
         try {
             goWebClient.post()
-                    .uri("/api/v1/progress/log")
+                    .uri("/api/v1/progress/logs")
                     .body(Mono.just(request), SaveWorkoutLogRequest.class)
                     .retrieve()
                     .toBodilessEntity()
                     .block();
-            LoggingUtils.logExternalCallSuccess(log, "go-service", "/api/v1/progress/log",
+            LoggingUtils.logExternalCallSuccess(log, "go-service", "/api/v1/progress/logs",
                     System.currentTimeMillis() - startTime, 200);
         } catch (Exception e){
             LoggingUtils.logExternalCallError(log, "go-service", "/api/v1/progress/logs",
@@ -93,6 +95,16 @@ public class GoProgressClientService {
             log.warn("Go service health check failed", kv("error", e.getMessage()));
             return false;
         }
+    }
+
+    public void saveBodyWeight(long userId, double weight) {
+        Map<String, Object> body = Map.of("user_id", userId, "weight", weight);
+        goWebClient.post()
+                .uri("/api/v1/body-weight")
+                .bodyValue(body)
+                .retrieve()
+                .toBodilessEntity()
+                .block();
     }
 };
 
