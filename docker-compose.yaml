@@ -25,6 +25,9 @@ services:
       - ./python-service:/app
     ports:
       - "8000:8000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
 
