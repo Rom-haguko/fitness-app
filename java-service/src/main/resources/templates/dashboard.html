@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Fitness Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">FitnessApp</a>
+        <form th:action="@{/logout}" method="post" class="d-flex">
+            <button class="btn btn-outline-light btn-sm" type="submit">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h2">Dashboard</h1>
+            <p class="text-muted">Welcome back, <span class="fw-bold text-primary" th:text="${username}">User</span>!</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4 transition-hover">
+                <div class="card-body p-4 text-center">
+                    <div class="display-6 text-primary mb-3">📝</div>
+                    <h4>Generate Plan</h4>
+                    <p class="text-muted small">Create a new AI-powered workout program tailored to your goals.</p>
+                    <a th:href="@{/questionnaire}" class="btn btn-primary stretched-link">Start Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="display-6 text-success mb-3">📅</div>
+                    <h4>My Plans</h4>
+                    <p class="text-muted small">Review your current and past training programs.</p>
+                    <a th:href="@{/plans}" class="btn btn-success stretched-link">View History</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4">
+                <div class="card-body p-4 text-center">
+                    <div class="display-6 text-info mb-3">📈</div>
+                    <h4>My Progress</h4>
+                    <p class="text-muted small">Check your stats, body weight history, and volume charts.</p>
+                    <a th:href="@{/progress}" class="btn btn-info text-white stretched-link">Track Growth</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

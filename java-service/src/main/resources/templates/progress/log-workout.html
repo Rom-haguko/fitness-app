@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Exercise | Fitness Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/dashboard">FitnessApp</a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="/plans">My Plans</a>
+            <a class="nav-link" href="/progress">My Progress</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-success text-white py-3 rounded-top-4">
+                    <h4 class="mb-0 text-center">Log Your Progress</h4>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-center text-muted mb-4">Record your actual performance for this exercise.</p>
+
+                    <form th:action="@{/progress/log}" th:object="${workoutLogForm}" method="post">
+                        <input type="hidden" th:field="*{workoutPlanId}">
+                        <input type="hidden" th:field="*{exerciseId}">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Actual Sets</label>
+                            <input type="number" class="form-control form-control-lg" th:field="*{sets}" min="1" required>
+                            <div class="form-text">How many sets did you actually complete?</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Actual Reps</label>
+                            <input type="number" class="form-control form-control-lg" th:field="*{reps}" min="1" required>
+                            <div class="form-text">Repetitions per set.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Weight Used (kg)</label>
+                            <input type="number" step="0.5" class="form-control form-control-lg" th:field="*{weight}" min="0" required>
+                            <div class="form-text">Enter 0 if it was a bodyweight exercise.</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg rounded-3">Save Log</button>
+                            <a href="javascript:history.back()" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
