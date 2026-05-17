@@ -11,11 +11,17 @@
         <a class="navbar-brand" href="/dashboard">Fitness App</a>
         <div class="navbar-nav ms-auto">
             <a class="nav-link" href="/plans">My Plans</a>
+            <a class="nav-link" href="/progress">Statistics</a>
         </div>
     </div>
 </nav>
 
 <div class="container">
+    <div th:if="${param.generated}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> Your plan has been generated and saved.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <h2 class="card-title" th:text="${'Plan: ' + plan.goal}">Goal</h2>
@@ -24,25 +30,29 @@
                 Level: <span th:text="${plan.level}">Level</span>
             </p>
             <div class="btn-group">
-                <a th:href="@{'/export/plan/' + ${plan.id} + '?format=pdf'}" class="btn btn-outline-danger btn-sm">Download PDF</a>
-                <a th:href="@{'/export/plan/' + ${plan.id} + '?format=txt'}" class="btn btn-outline-dark btn-sm">Download TXT</a>
+                <a th:href="@{/export/plan/{id}(id=${plan.id}, format='pdf')}" class="btn btn-outline-danger btn-sm">Download PDF</a>
+                <a th:href="@{/export/plan/{id}(id=${plan.id}, format='txt')}" class="btn btn-outline-dark btn-sm">Download TXT</a>
             </div>
         </div>
     </div>
 
-    <!-- Loop through days -->
     <div th:each="dayNum : ${#numbers.sequence(1, plan.daysPerWeek)}">
         <h4 class="mt-4 mb-3" th:text="${'Day ' + dayNum}">Day 1</h4>
         <div class="row">
             <div th:each="item : ${plan.items}" th:if="${item.dayNumber == dayNum}" class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100 border-primary">
+                <div class="card h-100 border-primary shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title text-primary" th:text="${item.exerciseName}">Bench Press</h5>
                         <p class="card-text">
                             <strong>Sets:</strong> <span th:text="${item.setsCount}">3</span><br>
                             <strong>Reps:</strong> <span th:text="${item.repsText}">10-12</span>
                         </p>
-                        <small class="text-muted" th:text="${item.focus}">Chest</small>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted" th:text="${item.focus}">Chest</small>
+
+                            <a th:href="@{/progress/log(planId=${plan.id}, itemId=${item.id})}"
+                               class="btn btn-success btn-sm">Log Performance</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -50,8 +60,10 @@
     </div>
 
     <div class="mt-5 mb-5 text-center">
-        <a href="/plans" class="btn btn-primary">Back to History</a>
+        <a href="/plans" class="btn btn-primary px-4">Back to History</a>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
