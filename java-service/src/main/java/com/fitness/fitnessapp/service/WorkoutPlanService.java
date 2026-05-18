@@ -30,7 +30,7 @@ public class WorkoutPlanService {
     private final PythonPlanClientService pythonPlanClientService;
     private final WorkoutPlanMapper workoutPlanMapper;
 
-    public GeneratePlanResponse generatePlan(QuestionnaireForm form){
+    public GeneratePlanResponse generatePlan(User user, QuestionnaireForm form){
         boolean isAvailable = pythonPlanClientService.healthCheck();
         log.debug("Python service health check", kv("is_available", isAvailable));
 
@@ -40,6 +40,7 @@ public class WorkoutPlanService {
         }
         log.info("Preparing data for Python AI service", kv("goal", form.getGoal()));
         GeneratePlanRequest request = new GeneratePlanRequest();
+        request.setUserId(user.getId());
         request.setGoal(form.getGoal());
         request.setLevel(form.getLevel());
         request.setDaysPerWeek(form.getDaysPerWeek());

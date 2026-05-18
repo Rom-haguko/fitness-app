@@ -33,14 +33,16 @@ public class ProgressController {
                 .orElseThrow(() -> new NotFoundException("User not found"));
         log.debug("User viewing progress summary", kv("user_id", user.getId()));
         ProgressSummaryResponse summary = goProgressClientService.getProgressSummary(user.getId());
-        model.addAttribute("summary", summary);
+        model.addAttribute("summary", goProgressClientService.getProgressSummary(user.getId()));
+        model.addAttribute("weightChart", goProgressClientService.getBodyWeightChart(user.getId()));
+        model.addAttribute("volumeChart", goProgressClientService.getVolumeChart(user.getId()));
         return "progress/summary";
     };
     @GetMapping("/log")
-    public String showWorkoutLogForm(@RequestParam Long workoutPlanId, @RequestParam Long exerciseId, Model model){
+    public String showWorkoutLogForm(@RequestParam("planId") Long workoutPlanId, @RequestParam("itemId") Long workoutPlanItemId, Model model){
         WorkoutLogForm form = new WorkoutLogForm();
         form.setWorkoutPlanId(workoutPlanId);
-        form.setExerciseId(exerciseId);
+        form.setWorkoutPlanItemId(workoutPlanItemId);
         model.addAttribute("workoutLogForm", form);
         return "progress/log-workout";
     };
@@ -54,10 +56,22 @@ public class ProgressController {
                 .orElseThrow(() -> new NotFoundException("User not found"));
         log.info("User is recording workout logs", kv("username", user.getUsername()));
         SaveWorkoutLogRequest request = new SaveWorkoutLogRequest(
-                user.getId(), form.getWorkoutPlanId(), form.getExerciseId(),
+                user.getId(), form.getWorkoutPlanId(), form.getWorkoutPlanItemId(),
                 form.getSets(), form.getReps(), form.getWeight()
         );
         goProgressClientService.saveWorkoutLog(request);
         return "redirect:/progress?success=true";
     };
+
+    @PostMapping("/weight")
+    public String submitBodyWeight(@RequestParam("weight") double weight, Principal principal) {
+        User user = userService.findByUsername(principal.getName()).orElseThrow();
+
+        log.info("User recording body weight", kv("user_id", user.getId()), kv("weight", weight));
+
+        goProgressClientService.saveBodyWeight(user.getId(), weight);
+
+        return "redirect:/progress?success=weight_saved";
+    }
 }
+
