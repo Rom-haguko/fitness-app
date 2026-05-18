@@ -18,11 +18,14 @@ class AIService:
         Split type: {data.split_type}.
 
         STRICT REQUIREMENTS:
-        1. Generate exactly {data.days_per_week} separate workout days.
-        2. For EACH day, provide MINIMUM 6 different exercises.
-        3. Use progressive overload principles.
-        4. ALL text must be in English.
-        5. RETURN ONLY VALID JSON. No preamble, no comments.
+        1. "name" (exercise name) MUST be SHORTER than 25 characters. (e.g., use "Pull-ups" instead of "Wide Grip Lat Pull-ups").
+        2. "reps" MUST be SHORTER than 25 characters. (e.g., use "10-12" instead of "10 to 12 slow repetitions").
+        3. "focus" MUST be SHORTER than 25 characters.
+        4. Generate exactly {data.days_per_week} separate workout days.
+        5. For EACH day, provide MINIMUM 6 different exercises.
+        6. Use progressive overload principles.
+        7. ALL text must be in English.
+        8. RETURN ONLY VALID JSON. No preamble, no comments.
 
         JSON STRUCTURE:
         {{
