@@ -6,3 +6,6 @@ pydantic-settings
 google-genai
 loguru
 python-dotenv
+pytest
+pytest-asyncio
+httpx 
