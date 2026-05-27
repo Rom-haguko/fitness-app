@@ -107,6 +107,7 @@ Fitness App — это система для автоматизированно�
 
 - Docker
 - Docker Compose
+- Makefile
 
 ---
 
@@ -118,6 +119,7 @@ go-service/
 java-service/
 python-service/
 docker-compose.yaml
+Makefile
 ```
 
 ---
@@ -136,9 +138,92 @@ docker-compose.yaml
 
 # Запуск проекта
 
+Проект можно запустить напрямую через Docker Compose:
+
 ```bash
 docker compose up --build
 ```
+
+Также в проект добавлен `Makefile`, который упрощает работу с Docker Compose.
+
+## Основные команды Makefile
+
+Показать список доступных команд:
+
+```bash
+make help
+```
+
+Собрать Docker-образы всех сервисов:
+
+```bash
+make build
+```
+
+Запустить все сервисы:
+
+```bash
+make up
+```
+
+Собрать и запустить все сервисы:
+
+```bash
+make up-build
+```
+
+Запустить все сервисы в фоне:
+
+```bash
+make up-d
+```
+
+Остановить и удалить контейнеры:
+
+```bash
+make down
+```
+
+Остановить контейнеры без удаления:
+
+```bash
+make stop
+```
+
+Перезапустить проект с пересборкой:
+
+```bash
+make restart
+```
+
+Посмотреть список контейнеров:
+
+```bash
+make ps
+```
+
+Посмотреть логи всех сервисов:
+
+```bash
+make logs
+```
+
+Посмотреть логи отдельного сервиса:
+
+```bash
+make logs-java
+make logs-go
+make logs-python
+make logs-db
+```
+
+Удалить контейнеры, volumes и orphan-контейнеры:
+
+```bash
+make clean
+```
+
+> Команда `make clean` удаляет volumes, поэтому данные PostgreSQL будут очищены.
 
 ---
 
