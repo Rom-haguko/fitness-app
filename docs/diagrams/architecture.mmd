@@ -1,0 +1,17 @@
+flowchart TD
+    U[User Browser]
+    J[Java Service]
+    P[Python Service]
+    G[Go Service]
+    DB[(PostgreSQL)]
+
+    U -->|HTTP / Web UI| J
+
+    J -->|Generate workout plan| P
+    P -->|Workout plan JSON| J
+
+    J -->|Progress / Statistics / Export| G
+    G -->|JSON / TXT / PDF| J
+
+    J -->|Users / Workout plans| DB
+    G -->|Progress / Body weight| DB
