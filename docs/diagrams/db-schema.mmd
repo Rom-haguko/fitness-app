@@ -1,0 +1,76 @@
+erDiagram
+    USERS {
+        bigint id PK
+        varchar username
+        varchar email
+        varchar password_hash
+        varchar role
+        timestamptz created_at
+    }
+
+    WORKOUT_PLANS {
+        bigint id PK
+        bigint user_id FK
+        varchar goal
+        varchar level
+        int days_per_week
+        varchar split_type
+        text notes
+        varchar source
+        timestamptz created_at
+    }
+
+    EXERCISES {
+        bigint id PK
+        varchar name
+        text description
+        varchar muscle_group
+        varchar equipment
+        timestamptz created_at
+    }
+
+    WORKOUT_PLAN_ITEMS {
+        bigint id PK
+        bigint workout_plan_id FK
+        int day_number
+        varchar focus
+        bigint exercise_id FK
+        varchar exercise_name
+        int sets_count
+        varchar reps_text
+        int exercise_order
+        timestamptz created_at
+    }
+
+    PROGRESS_LOGS {
+        bigint id PK
+        bigint user_id FK
+        bigint workout_plan_id FK
+        bigint workout_plan_item_id FK
+        bigint exercise_id FK
+        int sets
+        int reps
+        numeric weight
+        timestamptz performed_at
+        timestamptz created_at
+    }
+
+    BODY_WEIGHT_LOGS {
+        bigint id PK
+        bigint user_id FK
+        numeric weight
+        timestamptz recorded_at
+        timestamptz created_at
+    }
+
+    USERS ||--o{ WORKOUT_PLANS : has
+    USERS ||--o{ BODY_WEIGHT_LOGS : has
+    USERS ||--o{ PROGRESS_LOGS : has
+
+    WORKOUT_PLANS ||--o{ WORKOUT_PLAN_ITEMS : contains
+    WORKOUT_PLANS ||--o{ PROGRESS_LOGS : has
+
+    EXERCISES ||--o{ WORKOUT_PLAN_ITEMS : used_in
+    EXERCISES ||--o{ PROGRESS_LOGS : logged_as
+
+    WORKOUT_PLAN_ITEMS ||--o{ PROGRESS_LOGS : logged_as
