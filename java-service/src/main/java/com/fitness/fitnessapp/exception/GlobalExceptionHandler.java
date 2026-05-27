@@ -3,9 +3,11 @@ package com.fitness.fitnessapp.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
@@ -31,6 +33,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFoundException(NotFoundException e, Model model) {
         log.warn("Resource not found", kv("message", e.getMessage()));
         model.addAttribute("errorStatus", "404 - Not Found");
