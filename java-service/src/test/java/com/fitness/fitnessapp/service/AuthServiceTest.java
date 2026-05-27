@@ -71,4 +71,15 @@ class AuthServiceTest {
         // Then
         verify(userService, times(1)).createUser(request);
     }
+
+    @Test
+    @DisplayName("Should throw ValidationException when passwords do not match")
+    void registerUser_PasswordsMismatch() {
+        RegisterRequest request = new RegisterRequest();
+        request.setPassword("pass1");
+        request.setConfirmPassword("pass2");
+
+        assertThrows(ValidationException.class, () -> authService.registerUser(request));
+        verify(userService, never()).createUser(any());
+    }
 }
