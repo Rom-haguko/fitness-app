@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import MagicMock, patch
 
 def test_health_check(client):
-    """Проверяем, что сервис просто дышит"""
+    """Проверка работы сервиса"""
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"status": "Python service is running"}
