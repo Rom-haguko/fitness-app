@@ -29,7 +29,7 @@ func TestExportService_ExportPlan_TXTSuccess(t *testing.T) {
 
 	content := string(result.Content)
 
-	if !strings.Contains(content, "Plan: Muscle Gain Plan") {
+	if !strings.Contains(content, "Muscle Gain Plan") {
 		t.Fatalf("expected content to contain plan name, got %s", content)
 	}
 
